@@ -1,0 +1,48 @@
+There are 3 bugs
+
+Bug 1: Issue with isEmpty() return boolean
+    I ran SetTester.java and looked through the failed tests,
+    I noticed that emptySet_testIsEmpty was failing.
+    To test what was happening set a breakpoint at line 111
+    I stepped through into ArraySet(int initialCapacity) - No issues
+    Continued to step through with no issues until isEmpty()
+    With rear being 0 and there being no elements in the set
+    the method isEmpty should return true. But the current conditions
+    (rear > 0) returns false when rear = 0 which is when it should return true
+    fixed conditions changing (rear > 0) to (rear == 0) in isEmpty.
+    testIsEmpty test passed.
+
+Bug 2: Rear not incremented after addition of new element
+    Running SetTester.java again I noticed that SCENARIO: [ ] -> add(A) -> [A]
+    was failing lots of tests relating to the addition of new elements.
+    To test what was happening I set a breakpoint at line 147 where the first test
+    fails in this Scenario.
+    I continued to step through until arriving at add(element) method.
+    It first calls the contains(element) method, which returns false. So far so good.
+    Continuing through it succesfully adds the new element to the setArray. Still good
+    Continuing to step into, we now are checking to see if the array is still empty.
+    This calls the isEmpty() method which returns true as rear == 0.
+    isEmpty() should not return true because there is now a element in the set. This is 
+    causing the test to fail. To fix this we need to increment rear after the addition of a
+    new element.
+    To remedy this I increment rear(line: 60) after the addition of the new element on line 59
+    This now causes the test A_removeA_emptySet_testIsEmpty to pass. 
+
+Bug 3: 
+    Running SetTester.java again I notice that all failing tests are related to removing
+    elements after exactly 2 elements have been added. This is throwing a index 2 out of 
+    bounds for length 2.
+    I noticed that in SCENARIO: [A] -> add(B) -> [A,B] the testRemoveA and B were failing.
+    To test what is happening I set my breakpoint to line 265 as this is where the failing
+    test was located.
+    Stepping into until reaching set.add(Element_A) - Works good
+    Stepping into until reaching set.add(Element_B) - Works good
+    Stepping into until remove(element), remove(element) should remove A from the arraylist.
+    Continuing to step through remove we find the error in the remove method.
+    in the while loop on line 74 it loops through setArray setting setArray[i] = setArray[i+1];
+    this wont work because when we reach the end of the array it will call a index that is not in
+    bounds. I found this out when stepping into, on the last loop through the array it threw a index
+    out of bounds exception as it tries to call setArray[2] which is outside the bounds of the array.
+    To fix this we need to change the conditions of the while loop on line 74 so that it does not call
+    indexes that are out of bounds. 
+    So I changed the conditions from (i < rear) to (i < rear - 1) - Now all tests pass.
